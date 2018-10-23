@@ -1,0 +1,79 @@
+<html>
+<head>
+    <title>html2text</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='node_modules/bootstrap/dist/css/bootstrap.min.css') }}"/>
+</head>
+<body>
+
+<div class="container">
+    <h1>html2text</h1>
+    <hr>
+
+    <div class="form-group">
+        <label for="urlArea">URL Listesi</label>
+        <textarea id="urlArea" rows="20" class="form-control">http://beremaran.com</textarea>
+    </div>
+
+    <div class="form-group">
+        <button class="btn btn-primary" type="button" id="btnConvert">Convert</button>
+    </div>
+
+    <strong>*.DOC</strong>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>URL</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody id="resultTable"></tbody>
+    </table>
+</div>
+
+<script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='node_modules/popper.js/dist/popper.min.js') }}"></script>
+<script src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
+<script>
+    $(document).ready(() => {
+
+        const urlArea = $('#urlArea');
+        const btnConvert = $('#btnConvert');
+        const resultTable = $('#resultTable');
+
+        btnConvert.on('click', () => {
+            let urls = urlArea.val();
+
+            urlArea.attr('disabled', 'disabled');
+            btnConvert.attr('disabled', 'disabled');
+
+            $.post(
+                '/convert',
+                {
+                    'urls': urls
+                }
+            )
+                .then((data) => {
+                    const keys = Object.keys(data.data);
+
+                    keys.forEach((v) => {
+                        resultTable.append('<tr>' +
+                            '<td>' + v + '</td>' +
+                            '<td><a href="/static/'+ data.data[v] +'">'+ data.data[v] +'</a></td>' +
+                            '</tr>');
+                    });
+
+                    console.log(data);
+
+                    urlArea.removeAttr('disabled');
+                    btnConvert.removeAttr('disabled');
+                });
+        });
+
+    });
+</script>
+
+</body>
+</html>
