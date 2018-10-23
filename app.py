@@ -32,7 +32,7 @@ def convert_urls():
     for url in urls:
         print(url)
         r = requests.get(url).text
-        md = str(h.handle(r)).replace('\r', '\\r').replace('\n', '\\n')
+        md = str(h.handle(r)).replace('\r', '\\r').replace('\n', '\\n').replace('"', '\\"')
         document = Document()
         exec(md_to_doc.MarkdownWithMath(renderer=renderer)(md))
         doc_file = hashlib.md5(url.encode('ascii')).hexdigest() + '.docx'
